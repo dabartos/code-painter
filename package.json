@@ -1,10 +1,10 @@
 {
-  "name": "code-parser",
-  "version": "1.0.0",
+  "name": "code-painter",
+  "version": "0.0.1",
   "description": "Transform plain string into jsx formatted code.",
   "author": "bartosik.d.fm@gmail.com",
   "license": "MIT",
-  "repository": "https://github.com/esteemdav/code-parser",
+  "repository": "https://github.com/dabartos/code-painter",
   "main": "dist/index.js",
   "module": "dist/index.modern.js",
   "source": "src/index.tsx",

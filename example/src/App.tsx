@@ -1,10 +1,13 @@
-import React from 'react'
+import React, { FC } from "react";
+import AppStyled from "./AppStyled";
+import MainPage from "./layout/MainPage";
 
-import { ExampleComponent } from 'code-parser'
-import 'code-parser/dist/index.css'
+const App: FC = () => {
+    return (
+        <AppStyled>
+            <MainPage/>
+        </AppStyled>
+    );
+};
 
-const App = () => {
-  return <ExampleComponent text="Create React Library Example 😄" />
-}
-
-export default App
+export default App;
