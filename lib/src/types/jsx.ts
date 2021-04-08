@@ -1,4 +1,3 @@
-export type ContentType = "jsx";
 export enum PairType { angleBrackets, singleQuotes, doubleQuotes, curlyBrackets };
 export type CPElementHead = {
     name?: string;
@@ -28,4 +27,13 @@ export type ComponentProps = {
     name: string;
     value: string;
     closure: PairType;
+}
+export type JSXChunk = {
+    parent?: JSXChunk;
+    name?: string;
+    selfClosing?: boolean;
+    head: string;
+    body?: string;
+    start: number;
+    end: number;
 }

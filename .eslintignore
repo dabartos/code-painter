@@ -3,3 +3,6 @@ dist/
 node_modules/
 .snapshots/
 *.min.js
+**/node_modules/**
+**/dist/**
+**/build/**

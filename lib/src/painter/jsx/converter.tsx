@@ -1,34 +1,31 @@
-import * as CPT from "./types";
+import { Component, ComponentProps, PairType, JSXChunk }from "@types";
+import { extractComponentChunks } from "./helpers";
 
-const getComponentsList = (() => {
+const converter = (() => {
 
-    let fullContent: string = "";
-    const slicedContentList: string[] = [];
-    const components: CPT.Component[] = [];
+    let globalContent: string = "";
+    let chunks: JSXChunk[] = [];
+    const components: Component[] = [];
 
     const initialize = (content: string) => {
-        fullContent = content;
-        sliceContent();
+        globalContent = content;
+
+        trimContent();
+        chunks = extractComponentChunks(content);
         makeComponents();
     }
 
-    const sliceContent = () => {
+    const trimContent = () => {
 
-        while (fullContent.length > 0) {
-            const endIndex = findIndexBoundsForPair(fullContent, CPT.PairType.angleBrackets);
-            const slicedContent = fullContent.substring(0, endIndex[1] + 1).trim();
+        const start = globalContent.indexOf("<");
+        const end = globalContent.lastIndexOf(">");
 
-            slicedContentList.push(slicedContent);
-
-            fullContent = fullContent.substring(endIndex[1] + 1);
-        }
-
-        return slicedContentList.reverse();
+        globalContent = globalContent.substring(start, end);
     }
 
     const makeComponents = () => {
-        while (slicedContentList.length > 0) {
-            const el = slicedContentList.pop();
+        while (chunks.length > 0) {
+            const el = chunks.pop();
 
             if (!el) {
                 throw new Error("Content was not sliced properly");
@@ -40,9 +37,10 @@ const getComponentsList = (() => {
         }
     }
 
-    const createComponent = (slice: string): CPT.Component => {
+    const createComponent = (chunk: JSXChunk): Component => {
 
-        const component: CPT.Component = {};
+        const slice = chunk.body || "";
+        const component: Component = {};
         const hasInnerHTML = !slice.startsWith("<");
         const isSelfClosing = !hasInnerHTML && slice.match(/<\s*\/\s*[A-z]*\s*>/g)!== null;
 
@@ -50,7 +48,7 @@ const getComponentsList = (() => {
             const endOfInnerHTMLIndexRegex = slice.match(/<\/?\s*[A-z]+\s*/g);
             const endOfInnerHTMLIndex = slice.indexOf(endOfInnerHTMLIndexRegex ? endOfInnerHTMLIndexRegex[0] : "");
             component.innerHTML = slice.substring(0, endOfInnerHTMLIndex).trim();
-            const componentIndexBounds = findIndexBoundsForPair(slice, CPT.PairType.angleBrackets);
+            const componentIndexBounds = findIndexBoundsForPair(slice, PairType.angleBrackets);
 
             component.children = findComponentsInInnerHTML(slice, componentIndexBounds);
         }
@@ -73,46 +71,47 @@ const getComponentsList = (() => {
         return component;
     }
 
-    const findComponentsInInnerHTML = (content: string, bounds: number[]): CPT.Component[] => {
+    const findComponentsInInnerHTML = (content: string, bounds: number[]): Component[] => {
 
-        const childComponents: CPT.Component[] = [];
+        const childComponents: Component[] = [];
         const componentSlice = content.substring(bounds[0]).trim();
         const componentSliceIsValid = componentSlice.match(/<\s*\/\s*[A-z]*\s*>$/g) === null;
 
         if (componentSliceIsValid) {
-            childComponents.push(createComponent(componentSlice));
+            // childComponents.push(createComponent(componentSlice));
         }
 
         return childComponents;
     }
 
-    const findChildrenInComponent = (originalSlice: string): CPT.Component[] => {
+    const findChildrenInComponent = (originalSlice: string): Component[] => {
 
-        const indexPair = findIndexBoundsForPair(originalSlice, CPT.PairType.angleBrackets);
+        const indexPair = findIndexBoundsForPair(originalSlice, PairType.angleBrackets);
         const slice = originalSlice.substring(1+indexPair[1]);
-        console.log(originalSlice);
-        const children: CPT.Component[] = [];
+        console.log(slice);
+        const children: Component[] = [];
 
 
         return children;
     }
 
-    const createComponentProps = (content: string): CPT.ComponentProps[] => {
+    const createComponentProps = (content: string): ComponentProps[] => {
 
-        const props: CPT.ComponentProps[] = [];
+        const props: ComponentProps[] = [];
         const propsRegexMatches = content.match(/[A-z]*=[{"']/g);
 
         propsRegexMatches?.forEach((item: string, itemIndex: number) => {
 
+            console.log(itemIndex);
             const propStartIndex = content.indexOf(item);
             const name = item.substring(0, item.length - 2);        // -2 because all props have "={" or '="' or "='" at their ends
-            let closure = CPT.PairType.curlyBrackets;
+            let closure = PairType.curlyBrackets;
 
             if (item.endsWith("'")) {
-                closure = CPT.PairType.singleQuotes;
+                closure = PairType.singleQuotes;
             }
             else if (item.endsWith('"')) {
-                closure = CPT.PairType.doubleQuotes;
+                closure = PairType.doubleQuotes;
             }
 
             const lookupStartIndex = propStartIndex + name.length + 1;
@@ -125,7 +124,7 @@ const getComponentsList = (() => {
         return props;
     }
 
-    const findIndexBoundsForPair = (content: string, pairType: CPT.PairType): number[] => {
+    const findIndexBoundsForPair = (content: string, pairType: PairType): number[] => {
 
         let nestIndex = 0;
         let startIndex = -1;
@@ -137,7 +136,7 @@ const getComponentsList = (() => {
 
             if (isInvalidSymbol(content, i, pairType)) continue;
 
-            if (pairType === CPT.PairType.angleBrackets || pairType === CPT.PairType.curlyBrackets) {
+            if (pairType === PairType.angleBrackets || pairType === PairType.curlyBrackets) {
                 if (ch === symbol) {
                     if (startIndex === -1) {
                         startIndex = i;
@@ -179,9 +178,9 @@ const getComponentsList = (() => {
         return [startIndex, endIndex];
     }
 
-    const isInvalidSymbol = (content: string, index: number, pairType: CPT.PairType): boolean => {
+    const isInvalidSymbol = (content: string, index: number, pairType: PairType): boolean => {
 
-        if (pairType === CPT.PairType.angleBrackets){
+        if (pairType === PairType.angleBrackets){
             const startToSymbol = content.substring(0, index + 1);
             const symbolToEnd = content.substring(index);
 
@@ -195,22 +194,22 @@ const getComponentsList = (() => {
         return false;
     }
 
-    const getPairSymbols = (pairType: CPT.PairType) => {
+    const getPairSymbols = (pairType: PairType) => {
         let symbol = "{";
         let counterSymbol = "}";
 
         switch(pairType) {
-            case CPT.PairType.angleBrackets: {
+            case PairType.angleBrackets: {
                 symbol = "<";
                 counterSymbol = ">";
                 break;
             }
-            case CPT.PairType.singleQuotes: {
+            case PairType.singleQuotes: {
                 symbol = "'";
                 counterSymbol = "'";
                 break;
             }
-            case CPT.PairType.doubleQuotes: {
+            case PairType.doubleQuotes: {
                 symbol = '"';
                 counterSymbol = '"';
                 break;
@@ -229,4 +228,4 @@ const getComponentsList = (() => {
     };
 })();
 
-export default getComponentsList;
+export default converter;

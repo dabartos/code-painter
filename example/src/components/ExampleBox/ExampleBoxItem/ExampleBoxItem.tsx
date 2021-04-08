@@ -1,7 +1,7 @@
 import React, { FC, ReactNode } from "react";
 import { Typography } from "@material-ui/core";
 import useStyles from "./useStyles";
-import { convert } from "./jsxToHTML";
+import codepaint from "code-painter";
 
 type ExampleBoxItemProps = {
     children?: ReactNode;
@@ -14,7 +14,7 @@ const ExampleBoxItem: FC<ExampleBoxItemProps> = (props: ExampleBoxItemProps) => 
 
     return (
         <div className={styles.container}>
-            {convert(props.label, "jsx", 1.2)}
+            {codepaint.parseJsx(props.label)}
 
             {props.children && (<div className={styles.infoBox}>
                 <Typography className={styles.renderAsLabel}>About:</Typography>
