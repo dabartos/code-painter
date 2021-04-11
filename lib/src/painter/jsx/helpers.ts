@@ -1,4 +1,4 @@
-import { PairType, JSXComponentTag } from "@types";
+import { PairType, JSXComponentTag } from "@config";
 
 const getInnerHTML = (content: string): string => {
     let innerHTML = content;
@@ -85,7 +85,6 @@ const resolveHeader = (content: string): JSXComponentTag => {
         .replaceAll("{", "\\{")
         .replaceAll("}", "\\}");
 
-    // + 2 because ("<" + name.length + props.length + ">").length
     const fullHeader = content.match(new RegExp(`\\s*<\\s*${name}\\s*${spreadProps}\\s*\\/?\\s*>`));
 
     if (!fullHeader) {

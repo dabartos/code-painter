@@ -1,11 +1,7 @@
-import { CodepaintConfig } from "../types";
-import jsxClasses from "./jsx";
+export * from "./conversion-types";
+export * from "./styling-types";
+export * from "./classes";
+export * from "./defaultConfig";
+import defaultConfig from "./defaultConfig";
 
-const defaultConfig: CodepaintConfig = {
-    classes: {
-        jsx: jsxClasses
-    },
-    padding: 4
-};
-
-export default defaultConfig;
+export { defaultConfig };

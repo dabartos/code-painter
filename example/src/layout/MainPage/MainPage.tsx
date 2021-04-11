@@ -26,7 +26,9 @@ const MainPage: FC = () => {
                 `} />
                 <ExampleBoxItem label={`
                     <FormControl>
-                        <InputLabel id="demo-label-example">Test</InputLabel>
+                        <InputLabel 
+                        id="demo-label-example"
+                        >Test</InputLabel>
                         <Select
                             labelId="demo-label-example"
                             id="select-id-example"

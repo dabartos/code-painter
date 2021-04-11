@@ -1,5 +1,5 @@
 import { CSSProperties } from "react";
-import { JSXClasses } from "@types";
+import { JSXStyles } from "../styling-types";
 
 const colors = {
     angleBracket: "#808073",
@@ -18,8 +18,9 @@ const strings: CSSProperties = { color: colors.string };
 const innerHTMLs: CSSProperties = { color: colors.iHTML };
 const curlyBrackets: CSSProperties = { color: colors.curlyBracket };
 const undefined: CSSProperties = { color: colors.undefined };
+const container: CSSProperties = { marginLeft: "2rem" };
 
-const jsxClasses: JSXClasses = {
+const jsxClasses: JSXStyles = {
     angleBrackets,
     elements,
     props,
@@ -27,6 +28,7 @@ const jsxClasses: JSXClasses = {
     innerHTMLs,
     curlyBrackets,
     undefined,
+    container,
 }
 
 export default jsxClasses;

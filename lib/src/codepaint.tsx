@@ -1,15 +1,15 @@
-import React from 'react';
-import defaultConfig from "./config";
-import { CodepaintConfig } from "./types";
-import jsxToHTML from "./painter/jsx";
+import { CodepaintConfig, InternalConfig, defaultConfig } from "@config";
+import { PaintJSX } from "./painter";
 
 const codepaint = (() => {
 
-    let config: CodepaintConfig = defaultConfig;
+    let config: InternalConfig = new InternalConfig(defaultConfig);
 
-    const parseJsx = (content: string): JSX.Element => <pre><code>{jsxToHTML(content, config)}</code></pre>
+    const parseJsx = (content: string): JSX.Element => {
+        return new PaintJSX(content, config).getRoot();
+    }
 
-    const setConfig = (newConfigFile: CodepaintConfig) => config = newConfigFile;
+    const setConfig = (newConfigFile: CodepaintConfig) => config.setClasses(newConfigFile) ;
 
     return {
         parseJsx,

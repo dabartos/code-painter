@@ -7,7 +7,6 @@ const useStyles = makeStyles(
             fontSize: "1rem",
             lineHeight: "1.1rem",
             padding: (props: { expanded: boolean }) => (props.expanded ? "1.8rem 1.5rem 1.5rem 1.5rem" : "3rem 0 0 0"),
-            backgroundColor: (props: { expanded: boolean }) => (props.expanded ? "#1e1e1e" : "transparent"),
             borderRadius: "0.3rem",
             marginTop: "2rem",
         },

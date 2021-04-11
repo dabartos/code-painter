@@ -1,6 +1,7 @@
 import { CSSProperties } from "react";
+import { CodepainterStyleType, ConfigStyles } from "./config";
 
-export type JSXClasses = {
+export interface JSXStyles extends ConfigStyles {
     angleBrackets: CSSProperties;
     elements: CSSProperties;
     props: CSSProperties;
@@ -8,4 +9,10 @@ export type JSXClasses = {
     innerHTMLs: CSSProperties;
     curlyBrackets: CSSProperties;
     undefined: CSSProperties;
+    container: CSSProperties;
+};
+
+export type DefaultStyles = {
+    wrapper?: CSSProperties;
+    [CodepainterStyleType.jsx]: JSXStyles;
 }
