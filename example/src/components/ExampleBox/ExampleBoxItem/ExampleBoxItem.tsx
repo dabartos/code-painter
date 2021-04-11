@@ -1,7 +1,7 @@
 import React, { FC, ReactNode } from "react";
 import { Typography } from "@material-ui/core";
 import useStyles from "./useStyles";
-import codepaint from "code-painter";
+import codepaint from "@codepainter/core";
 
 type ExampleBoxItemProps = {
     children?: ReactNode;

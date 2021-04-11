@@ -1,8 +1,8 @@
 import React from "react";
-import { CodepaintConfig, Component, ComponentProps, PairType } from "@types";
+import { Component, CodepaintConfig, ComponentProps, PairType }from "@types";
 import converter from "./converter";
 
-const paintJsx = (inContent: string, config: CodepaintConfig): JSX.Element[] => {
+const jsxToHTML = (inContent: string, config: CodepaintConfig): JSX.Element[] => {
 
     const padding = config.padding;
     const styles = config.classes.jsx;
@@ -89,4 +89,4 @@ const paintJsx = (inContent: string, config: CodepaintConfig): JSX.Element[] => 
     return resolveJSX(inContent);
 }
 
-export default paintJsx;
+export default jsxToHTML;

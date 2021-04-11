@@ -29,11 +29,19 @@ export type ComponentProps = {
     closure: PairType;
 }
 export type JSXChunk = {
-    parent?: JSXChunk;
-    name?: string;
+    name: string;
+    body: string;
+    clipIndex?: number;
     selfClosing?: boolean;
-    head: string;
-    body?: string;
-    start: number;
-    end: number;
+    children?: JSXChunk[];
+    props?: string[];
+    isInnerHTML?: boolean;
+}
+
+export interface JSXComponentTag {
+    name: string;
+    startIndex: number;
+    endIndex:  number;
+    props?: string[];
+    selfClosing?: boolean;
 }

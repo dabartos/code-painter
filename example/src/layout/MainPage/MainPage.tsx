@@ -1,18 +1,25 @@
 import React, {FC} from "react";
-import MainPageStyled from "./MainPageStyled";
 import {ExampleBox, ExampleBoxItem} from "../../components";
 
 const MainPage: FC = () => {
     return (
-        <MainPageStyled>
+        <div>
             <ExampleBox defaultExpanded>
                 <ExampleBoxItem label={`
                     <Container><HiComp>Hi</HiComp>
                         <DemoLabel id="demo-label-example">Test</DemoLabel>
                         <CComponent comp={<D/>}>
-                            asd{"<"}asd <NestedE f={ <F> </F>}> gfgfg <SuperInnerG/></NestedE> <E f={ <F> </F>} />
+                            asd{"<"}asd
+                            <NestedE f={ <F> </F>}>
+                                gfgfg
+                                <SuperInnerG/>
+                                <SuperInnerG {...props} />
+                                <div>
+                                    Lol
+                                </div>
+                            </NestedE> <E f={ <F> </F>} />
                             <C comp={<D/>} />
-                            asd{"<"}asd 
+                            asd{"<"}asd
                         </CComponent>
                         !ioasdghb
                     </Container>
@@ -36,7 +43,7 @@ const MainPage: FC = () => {
                     </FormControl>
                 `} />
             </ExampleBox>
-        </MainPageStyled>
+        </div>
     );
 };
 
