@@ -15,6 +15,7 @@ export class ConfigClasses {}
 export class JSXClasses extends ConfigClasses {
     angleBrackets?: string;
     elements?: string;
+    elementsHTML?: string;
     props?: string;
     strings?: string;
     innerHTMLs?: string;

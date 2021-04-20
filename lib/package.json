@@ -1,6 +1,6 @@
 {
   "name": "@codepainter/core",
-  "version": "0.0.1-SNAPSHOT.1",
+  "version": "0.0.4",
   "description": "Transform plain string into jsx formatted code.",
   "author": "bartosik.d.fm@gmail.com",
   "license": "MIT",

@@ -6,6 +6,7 @@ const wrapper: CSSProperties = {
     backgroundColor: "#1e1e1e",
     padding: "2rem",
     color: "white",
+    whiteSpace: "pre-wrap"
 }
 
 const defaultConfig: DefaultStyles = {

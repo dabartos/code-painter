@@ -1,5 +1,5 @@
 import React, { Fragment } from "react";
-import { InternalConfig, CodepainterJSXStyles, JSXChunk, JSXProp } from "@config";
+import { InternalConfig, CodepainterJSXStyles, JSXChunk, JSXProp, JSXClasses } from "@config";
 import converter from "./jsx/converter";
 import PaintRoot from "./PaintRoot";
 
@@ -47,11 +47,12 @@ class PaintJSX extends PaintRoot {
     private makeHeader(chunk: JSXChunk): JSX.Element {
 
         const props = this.createProps(chunk.props);
+        const elementsStyleTag: keyof(JSXClasses) = chunk.name[0] !== chunk.name[0].toUpperCase() ? "elementsHTML" : "elements";
 
         return (
             <Fragment>
                 <span {...this.styles.getStyleFor("angleBrackets")}>{"<"}</span>
-                <span {...this.styles.getStyleFor("elements")}>{chunk.name}</span>
+                <span {...this.styles.getStyleFor(elementsStyleTag)}>{chunk.name}</span>
                 {props}
                 <span {...this.styles.getStyleFor("angleBrackets")}>{`${chunk.selfClosing ? " /" : ""}>`}</span>
             </Fragment>
@@ -65,7 +66,7 @@ class PaintJSX extends PaintRoot {
         }
 
         const filteredProps = props.filter((prop: string) => {
-            const rgx = prop.trim().match(/^[A-z]*=[{'"`]/);
+            const rgx = prop.trim().match(/^[A-z]*/);
 
             if (!rgx) {
                 // throw new Error(`What sort of prop is this?\nProp name: [${prop}]`);
@@ -79,9 +80,6 @@ class PaintJSX extends PaintRoot {
             propStr = propStr.trim();
 
             const prop = this.makeProp(propStr);
-            const propIsVariable = prop.type === "curly";
-            const bracketStyle = this.styles.getStyleFor(propIsVariable ? "curlyBrackets" : "strings");
-            const contentStyle = this.styles.getStyleFor(propIsVariable ? "undefined" : "strings");
 
             return (
                 <span key={`codepainter-key-${this.getKeyIndex()}`}>
@@ -89,12 +87,7 @@ class PaintJSX extends PaintRoot {
                     <span {...this.styles.getStyleFor("props")}>
                         {prop.name}
                     </span>
-                    =
-                    <span {...bracketStyle}>{propIsVariable ? "{" : '"'}</span>
-                    <span {...contentStyle}>
-                        {prop.content}
-                    </span>
-                    <span {...bracketStyle}>{propIsVariable ? "}" : '"'}</span>
+                    {this.getPropValue(prop)}
                 </span>
             )
         });
@@ -103,16 +96,50 @@ class PaintJSX extends PaintRoot {
     private makeProp(strContent: string): JSXProp {
 
         const dividerIndex = strContent.indexOf("=");
-        const name = strContent.substring(0, dividerIndex);
-        const typeChar = strContent.substring(dividerIndex + 1, dividerIndex + 2);
-        const type = typeChar === "{" ? "curly" : "string";
-        const content = strContent.substring(name.length + 2, strContent.length - 1);
+        const jsxProp: JSXProp = {
+            name: "",
+            type: "curly",
+            content: "",
+            isValueProp: dividerIndex === -1
+        }
 
-        return {
-            name,
-            type,
-            content,
-        };
+        if (dividerIndex !== -1) {
+            const name = strContent.substring(0, dividerIndex);
+            const typeChar = strContent.substring(dividerIndex + 1, dividerIndex + 2);
+            const type = typeChar === "{" ? "curly" : "string";
+            const content = strContent.substring(name.length + 2, strContent.length - 1);
+
+            jsxProp.name = name;
+            jsxProp.type = type;
+            jsxProp.content = content;
+        }
+        else {
+            jsxProp.name = strContent;
+        }
+
+        return jsxProp;
+    }
+
+    private getPropValue(prop: JSXProp) {
+
+        if (prop.isValueProp) {
+            return null;
+        }
+
+        const propIsVariable = prop.type === "curly";
+        const bracketStyle = this.styles.getStyleFor(propIsVariable ? "curlyBrackets" : "strings");
+        const contentStyle = this.styles.getStyleFor(propIsVariable ? "undefined" : "strings");
+
+        return (
+            <Fragment>
+                =
+                <span {...bracketStyle}>{propIsVariable ? "{" : '"'}</span>
+                <span {...contentStyle}>
+                    {prop.content}
+                </span>
+                <span {...bracketStyle}>{propIsVariable ? "}" : '"'}</span>
+            </Fragment>
+        );
     }
 
     private makeChildren(chunk: JSXChunk): JSX.Element[] {
@@ -128,10 +155,13 @@ class PaintJSX extends PaintRoot {
         if (chunk.selfClosing) {
             return;
         }
+
+        const elementsStyleTag: keyof(JSXClasses) = chunk.name[0] !== chunk.name[0].toUpperCase() ? "elementsHTML" : "elements";
+
         return (
             <Fragment>
                 <span {...this.styles.getStyleFor("angleBrackets")}>{"</"}</span>
-                <span {...this.styles.getStyleFor("elements")}>{chunk.name}</span>
+                <span {...this.styles.getStyleFor(elementsStyleTag)}>{chunk.name}</span>
                 <span {...this.styles.getStyleFor("angleBrackets")}>{">"}</span>
             </Fragment>
         );

@@ -6,6 +6,7 @@ export type JSXProp = {
     name: string;
     type: "curly" | "string",
     content: JSXPropContent;
+    isValueProp?: boolean;
 }
 
 export type JSXChunk = {

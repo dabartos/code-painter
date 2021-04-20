@@ -4,6 +4,7 @@ import { CodepainterStyleType, ConfigStyles } from "./config";
 export interface JSXStyles extends ConfigStyles {
     angleBrackets: CSSProperties;
     elements: CSSProperties;
+    elementsHTML: CSSProperties;
     props: CSSProperties;
     strings: CSSProperties;
     innerHTMLs: CSSProperties;

@@ -112,34 +112,45 @@ const getComponentProps = (content: string): string[] => {
         content = content.substring(0, pairIndex[1]);
 
         while (content.length > 0) {
-            content.trim();
+            content = content.trim();
             if (content === "/") {
                 break;
             }
 
-            const propRegx = content.match(/[A-z]*="|'|{/) || "";
-            const prop: string = propRegx && propRegx[0] || "";
+            const propRegx = content.match(/^[A-z]*="|'|{/) || "";
+            let prop: string = "";
 
-            const pairChar = prop[prop.length-1];
-            let pairType: PairType = PairType.doubleQuotes;
+            if (propRegx) {
+                prop = propRegx[0];
 
-            switch (pairChar) {
-                case "'": {
-                    pairType = PairType.singleQuotes;
-                    break;
+                const pairChar = prop[prop.length-1];
+                let pairType: PairType = PairType.doubleQuotes;
+
+                switch (pairChar) {
+                    case "'": {
+                        pairType = PairType.singleQuotes;
+                        break;
+                    }
+                    case "{": {
+                        pairType = PairType.curlyBrackets;
+                        break;
+                    }
                 }
-                case "{": {
-                    pairType = PairType.curlyBrackets;
-                    break;
-                }
+
+                const propPair = findIndexBoundsForPair(content, pairType);
+
+                prop = content.substring(0, propPair[1] + 1);
+            }
+            else {
+                const booleanPropRegx = content.match(/^[A-z]*/) || "";
+                prop = booleanPropRegx[0] || "";
             }
 
-            const propPair = findIndexBoundsForPair(content, pairType);
-            const fullProp = content.substring(0, propPair[1] + 1);
+            content = content.substring(prop.length).trim();
 
-            content = content.substring(fullProp.length).trim();
-
-            props.push(fullProp.trim());
+            if (prop) {
+                props.push(prop.trim());
+            }
         }
     }
 
@@ -157,7 +168,7 @@ const resolveFooter = (header: JSXComponentTag, content: string): JSXComponentTa
     let endIndex: number = -1;
     let footerTag = null;
 
-    const regexComponentName = new RegExp(`<\\s*\\/?\\s*${name}(?=.*<\\s*\\/\\s*${name}\\s*>)`, "g");
+    const regexComponentName = new RegExp(`<\\s*\\/?\\s*${name}\\b(?=.*<\\s*\\/\\s*${name}\\b\\s*>)`, "g");
     footerTag = content.match(regexComponentName);
 
     if (!footerTag) {
@@ -183,8 +194,15 @@ const resolveFooter = (header: JSXComponentTag, content: string): JSXComponentTa
                 continue;
             }
             else if (footerTag[i-1].text.match(/^<\s*[A-z]/)) {
+                const contentAfterClosingTag = content.substring(tag.endIndex);
+                footerTag = contentAfterClosingTag.match(/\s*>/);
+
+                if (!footerTag) {
+                    throw new Error(`Cannot find an ending angle bracket for closing tag </${name}>`);
+                }
+
                 startIndex = tag.index;
-                endIndex = tag.endIndex;
+                endIndex = tag.endIndex + footerTag[0].length;
                 break;
             }
         }

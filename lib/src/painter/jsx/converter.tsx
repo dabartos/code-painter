@@ -20,9 +20,6 @@ const getEntryJSXChunk = (inContent: string): JSXChunk => {
             }
         }
         else {
-            if (content.includes("MenuItem ")){
-                debugger;
-            }
             const header: JSXComponentTag = resolveHeader(content);
             const footer = resolveFooter(header, content);
             const body: string = content.substring(header.endIndex, footer?.startIndex);

@@ -6,7 +6,7 @@ const MainPage: FC = () => {
         <div>
             <ExampleBox defaultExpanded>
                 <ExampleBoxItem label={`
-                    <Container><HiComp>Hi</HiComp>
+                    <Container disableGutter><HiComp>Hi</HiComp>
                         <DemoLabel id="demo-label-example">Test</DemoLabel>
                         <CComponent comp={<D/>}>
                             asd{"<"}asd
@@ -43,6 +43,16 @@ const MainPage: FC = () => {
                             <MenuItem value={30}>Thirty</MenuItem>
                         </Select>
                     </FormControl>
+                `} />
+                <ExampleBoxItem label={`
+                    <Accordion asdasd>
+                    <AccordionSummary>Accordion</AccordionSummary>
+                    <AccordionDetails>Test</AccordionDetails>
+                </Accordion>
+                <Accordion>
+                        <AccordionSummary>Accordion</AccordionSummary>
+                        <AccordionDetails>Test</AccordionDetails>
+                    </Accordion>
                 `} />
             </ExampleBox>
         </div>
