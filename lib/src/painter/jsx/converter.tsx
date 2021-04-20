@@ -9,9 +9,7 @@ const getEntryJSXChunk = (inContent: string): JSXChunk => {
 
         if (isInnerHTML) {
             const innerHTML = getInnerHTML(content);
-            if (innerHTML === ">"){
-                debugger;
-            }
+
             return {
                 name: "",
                 children: [],
