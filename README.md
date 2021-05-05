@@ -5,7 +5,7 @@
 ## Install
 
 ```bash
-npm install --save code-parser
+npm install --save @codepainter/core
 ```
 
 ## Usage
